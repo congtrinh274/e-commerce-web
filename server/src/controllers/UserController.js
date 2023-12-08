@@ -1,12 +1,16 @@
 require('dotenv').config();
 const User = require('../models/UserModel');
 const { hashPassword } = require('../middlewares/authMiddleware.js');
+const { sendMail } = require('../utils/sendMail.js');
 const crypto = require('crypto');
-const nodemailer = require('nodemailer');
 
 class UserController {
     // [POST] /users/register
     register = async (req, res) => {
+        // Check unique Email
+        const emailExist = await User.findOne({ email: req.body.email });
+        if (emailExist) return res.status(400).send({ message: 'Email already exist!' });
+
         try {
             const { username, email, password } = req.body;
 
@@ -25,28 +29,12 @@ class UserController {
             user.emailVerificationExpires = Date.now() + 3600000;
             await user.save();
 
-            const transporter = nodemailer.createTransport({
-                service: 'gmail',
-                auth: {
-                    user: process.env.TRANSPORTER,
-                    pass: process.env.EMAIL_APPLICATION_PASSWORD,
-                },
-            });
-
-            const mailOptions = {
-                from: process.env.EMAIL_APPLICATION_PASSWORD,
-                to: user.email,
-                subject: 'Email Verification', // Chủ đề email
-                text: `Please click on the following link to verify your email: ${process.env.APP_BASE_URL}/users/verify/${user.emailVerificationToken}`,
-            };
-
-            transporter.sendMail(mailOptions, (error, info) => {
-                if (error) {
-                    console.error(error);
-                } else {
-                    console.log('Email sent: ' + info.response);
-                }
-            });
+            // send verify Email
+            sendMail(
+                user.email,
+                'Email Verification',
+                `Please click on the following link to verify your email: ${process.env.APP_BASE_URL}/users/verify/${user.emailVerificationToken}`,
+            );
 
             res.status(201).json({
                 message: 'User registered successfully. Please check your email for verification.',
