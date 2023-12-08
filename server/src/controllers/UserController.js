@@ -1,6 +1,6 @@
 require('dotenv').config();
 const User = require('../models/UserModel');
-const { hashPassword } = require('../middlewares/authMiddleware.js');
+const { hashPassword, verifyPassword, generateToken } = require('../middlewares/authMiddleware.js');
 const { sendMail } = require('../utils/sendMail.js');
 const crypto = require('crypto');
 
@@ -65,6 +65,36 @@ class UserController {
             await user.save();
 
             res.status(200).json({ message: 'Email verified successfully' });
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ error: 'Internal server error' });
+        }
+    };
+
+    //[POST] /users/login
+    login = async (req, res) => {
+        try {
+            const { email, password } = req.body;
+
+            const user = await User.findOne({ email });
+
+            if (!user) {
+                return res.status(401).json({ error: 'Invalid credentials' });
+            }
+
+            const passwordMatch = await verifyPassword(password, user.password);
+
+            if (!passwordMatch) {
+                return res.status(401).json({ error: 'Invalid credentials' });
+            }
+
+            if (!user.emailVerified) {
+                return res.status(403).json({ error: 'Email not verified' });
+            }
+
+            const token = generateToken(user._id);
+
+            res.status(200).json({ token });
         } catch (error) {
             console.error(error);
             res.status(500).json({ error: 'Internal server error' });
