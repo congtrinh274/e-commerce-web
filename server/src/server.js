@@ -3,6 +3,7 @@ const path = require('path');
 const morgan = require('morgan');
 const methodOverride = require('method-override');
 const bodyParser = require('body-parser');
+const cors = require('cors');
 
 const route = require('./routes');
 const db = require('./configs/dbConfig');
@@ -11,6 +12,8 @@ db.connect();
 
 const app = express();
 const port = 3000;
+
+app.use(cors());
 
 //Use static folder
 app.use(express.static(path.join(__dirname, 'public')));

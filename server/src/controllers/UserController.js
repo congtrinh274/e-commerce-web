@@ -94,7 +94,7 @@ class UserController {
 
             const token = generateToken(user._id);
 
-            res.status(200).json({ token });
+            res.status(200).json({ data: user, meta: token });
         } catch (error) {
             console.error(error);
             res.status(500).json({ error: 'Internal server error' });
