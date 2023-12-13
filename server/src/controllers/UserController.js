@@ -3,13 +3,38 @@ const User = require('../models/UserModel');
 const { hashPassword, verifyPassword, generateToken } = require('../middlewares/authMiddleware.js');
 const { sendMail } = require('../utils/sendMail.js');
 const crypto = require('crypto');
+const { ipv4Addresses } = require('../utils/getIPAddress.js');
+
+const currentIPv4 = ipv4Addresses.length > 0 ? ipv4Addresses[0] : '127.0.0.1';
 
 class UserController {
+    //// [Get] /users/get-user:email
+    getUser = async (req, res) => {
+        try {
+            const { email } = req.query;
+
+            console.log(email);
+
+            const user = await User.findOne({ email });
+
+            if (!user) {
+                return res.status(404).json({ error: 'User not found' });
+            }
+
+            const token = generateToken(user._id);
+
+            res.status(200).json({ data: user, meta: token });
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ error: 'Internal server error' });
+        }
+    };
+
     // [POST] /users/register
     register = async (req, res) => {
         // Check unique Email
         const emailExist = await User.findOne({ email: req.body.email });
-        if (emailExist) return res.status(400).send({ message: 'Email already exist!' });
+        if (emailExist) return res.status(400).send({ error: 'Email already exist!' });
 
         try {
             const { username, email, password } = req.body;
@@ -29,14 +54,17 @@ class UserController {
             user.emailVerificationExpires = Date.now() + 3600000;
             await user.save();
 
+            console.log(currentIPv4);
+
             // send verify Email
             sendMail(
                 user.email,
                 'Email Verification',
-                `Please click on the following link to verify your email: ${process.env.APP_BASE_URL}/users/verify/${user.emailVerificationToken}`,
+                `Please click on the following link to verify your email: http://${currentIPv4}:${process.env.PORT}/users/verify/${user.emailVerificationToken}`,
             );
 
             res.status(201).json({
+                data: user,
                 message: 'User registered successfully. Please check your email for verification.',
             });
         } catch (error) {
