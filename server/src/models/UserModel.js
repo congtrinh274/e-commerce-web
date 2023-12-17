@@ -23,7 +23,7 @@ const UserSchema = new Schema(
         },
         role: {
             type: String,
-            enum: ['buyer', 'seller', 'both'], // Enum: buyer, seller, or both
+            enum: ['buyer', 'seller', 'both'],
             default: 'buyer',
         },
         buyerInfo: {
@@ -31,13 +31,17 @@ const UserSchema = new Schema(
             orderHistory: [{ type: Schema.Types.ObjectId, ref: 'Order' }],
         },
         sellerInfo: {
-            storeName: String,
-            storeDescription: String,
+            type: Schema.Types.ObjectId,
+            ref: 'Store',
             salesHistory: [{ type: Schema.Types.ObjectId, ref: 'Order' }],
         },
         emailVerified: {
             type: Boolean,
             default: false,
+        },
+        refreshToken: {
+            type: String,
+            default: null,
         },
         emailVerificationToken: String,
         emailVerificationExpires: Date,

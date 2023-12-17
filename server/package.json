@@ -20,7 +20,8 @@
         "method-override": "^3.0.0",
         "mongoose": "^8.0.2",
         "mongoose-slug-generator": "^1.0.4",
-        "nodemailer": "^6.9.7"
+        "nodemailer": "^6.9.7",
+        "rand-token": "^1.0.1"
     },
     "devDependencies": {
         "morgan": "^1.10.0",
