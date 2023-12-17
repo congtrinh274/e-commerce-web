@@ -1,0 +1,36 @@
+my-e-commerce-app/
+|-- server/
+|   |-- node_modules/
+|   |-- db.js
+|   |-- api.js
+|   |-- package.json
+|   |-- server.js
+|
+|-- client/
+|   |-- node_modules/
+|   |-- public/
+|   |-- src/
+|   |   |-- components/
+|   |   |   |-- Auth/
+|   |   |   |   |-- Login.js
+|   |   |   |   |-- Register.js
+|   |   |   |
+|   |   |   |-- Products/
+|   |   |   |   |-- ProductList.js
+|   |   |   |   |-- ProductDetail.js
+|   |   |   |
+|   |   |   |-- Cart/
+|   |   |   |   |-- ShoppingCart.js
+|   |   |   |
+|   |   |   |-- Seller/
+|   |   |       |-- SellerDashboard.js
+|   |   |       |-- AddProduct.js
+|   |   |       |-- EditProduct.js
+|   |   |
+|   |   |-- App.js
+|   |   |-- index.js
+|   |   |-- App.css
+|
+|-- package.json
+|-- .gitignore
+|-- README.md

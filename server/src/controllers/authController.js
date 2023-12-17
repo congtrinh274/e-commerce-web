@@ -38,7 +38,7 @@ exports.login = async (req, res) => {
 };
 
 exports.register = async (req, res) => {
-  const { email, password } = req.body;
+  const { email, password, role } = req.body;
 
   try {
     // Check if the user already exists
@@ -51,7 +51,6 @@ exports.register = async (req, res) => {
 
     // Save the user to the database without email verification
     const hashedPassword = await bcrypt.hash(password, 10);
-    const role = 'buyer';
 
     await db.query('INSERT INTO users (email, password, role) VALUES (?, ?, ?)', [
       email,
