@@ -3,6 +3,7 @@ const crypto = require('crypto');
 const randToken = require('rand-token');
 
 const User = require('../models/UserModel.js');
+const Blacklist = require('../models/BlackList');
 const { hashPassword, verifyPassword, generateToken, decodeToken } = require('../method/auth/auth.method.js');
 const { sendMail } = require('../utils/sendMail.js');
 const { ipv4Addresses } = require('../utils/getIPAddress.js');
@@ -119,7 +120,12 @@ class AuthController {
             }
             await user.save();
 
-            res.status(200).json({ data: user, accessToken: accessToken, refreshToken: refreshToken });
+            res.status(200).json({
+                data: user,
+                accessToken: accessToken,
+                refreshToken: refreshToken,
+                message: 'Login Successfully',
+            });
         } catch (error) {
             console.error(error);
             res.status(500).json({ error: 'Internal server error' });
@@ -160,6 +166,11 @@ class AuthController {
             return res.status(400).send('Refresh token không hợp lệ.');
         }
 
+        const blacklistedToken = new Blacklist({
+            token: accessTokenFromHeader,
+        });
+        await blacklistedToken.save();
+
         // Tạo access token mới
         const dataForAccessToken = {
             userID,
@@ -173,6 +184,26 @@ class AuthController {
             data: user,
             accessToken,
         });
+    };
+
+    logout = async (req, res) => {
+        try {
+            const accessTokenFromHeader = req.headers.x_authorization;
+            if (!accessTokenFromHeader) {
+                return res.status(400).send('Không tìm thấy access token.');
+            }
+
+            // Thêm access token vào danh sách đen (vô hiệu hóa)
+            const blacklistedToken = new Blacklist({
+                token: accessTokenFromHeader,
+            });
+            await blacklistedToken.save();
+
+            return res.status(200).send('Đã đăng xuất thành công.');
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ error: 'Internal server error' });
+        }
     };
 }
 
