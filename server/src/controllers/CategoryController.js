@@ -3,6 +3,17 @@ require('dotenv').config();
 const Category = require('../models/CategoryModel');
 
 class CategoryController {
+    // [GET] categories/
+    show = async (req, res) => {
+        try {
+            const categories = await Category.find();
+            res.status(200).json(categories);
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ error: 'Internal server error' });
+        }
+    };
+
     // [POST] category/create
     create = async (req, res) => {
         try {
