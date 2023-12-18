@@ -9,15 +9,18 @@ const BlacklistSchema = new Schema(
             required: true,
             unique: true,
         },
-        expireAt: {
+        createdAt: {
             type: Date,
-            expires: process.env.ACCESS_TOKEN_LIFE,
+            default: Date.now,
         },
     },
     {
         timestamps: true,
     },
 );
+
+// Tạo index với expireAfterSeconds
+BlacklistSchema.index({ createdAt: 1 }, { expireAfterSeconds: 600 });
 
 const Blacklist = mongoose.model('Blacklist', BlacklistSchema);
 

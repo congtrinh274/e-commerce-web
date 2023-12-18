@@ -1,6 +1,6 @@
 require('dotenv').config();
 
-const User = require('../models/UserModel.js');
+const User = require('../models/UserModel');
 
 class UserController {
     getProfile = async (req, res) => {

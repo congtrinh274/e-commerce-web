@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const slug = require('mongoose-slug-generator');
+const slug = require('mongoose-slug-updater');
 
 mongoose.plugin(slug);
 
@@ -19,6 +19,11 @@ const StoreSchema = new Schema(
             type: Schema.Types.ObjectId,
             ref: 'User',
             required: true,
+            unique: true,
+        },
+        phoneNumber: {
+            type: String,
+            required: true,
         },
         products: [
             {
@@ -37,4 +42,5 @@ const StoreSchema = new Schema(
 );
 
 const Store = mongoose.model('Store', StoreSchema);
+
 module.exports = Store;

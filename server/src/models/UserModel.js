@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const slug = require('mongoose-slug-generator');
+const slug = require('mongoose-slug-updater');
 
 mongoose.plugin(slug);
 
@@ -26,15 +26,21 @@ const UserSchema = new Schema(
             enum: ['buyer', 'seller', 'both'],
             default: 'buyer',
         },
-        buyerInfo: {
-            address: String,
-            orderHistory: [{ type: Schema.Types.ObjectId, ref: 'Order' }],
+        address: {
+            type: String,
+            default: '',
         },
-        sellerInfo: {
+        phoneNumber: {
+            type: String,
+            default: null,
+        },
+        orderHistory: [{ type: Schema.Types.ObjectId, ref: 'Order' }],
+        store: {
             type: Schema.Types.ObjectId,
             ref: 'Store',
-            salesHistory: [{ type: Schema.Types.ObjectId, ref: 'Order' }],
+            default: null,
         },
+        salesHistory: [{ type: Schema.Types.ObjectId, ref: 'Order' }],
         emailVerified: {
             type: Boolean,
             default: false,

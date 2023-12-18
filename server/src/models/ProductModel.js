@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const slug = require('mongoose-slug-generator');
+const slug = require('mongoose-slug-updater');
 
 mongoose.plugin(slug);
 
@@ -32,6 +32,10 @@ const ProductSchema = new Schema(
         category: {
             type: Schema.Types.ObjectId,
             ref: 'Category',
+            required: true,
+        },
+        countInStock: {
+            type: Number,
             required: true,
         },
         images: [{ type: String }],
