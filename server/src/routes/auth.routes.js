@@ -6,11 +6,8 @@ const { isAuth } = require('../middlewares/auth.middleware');
 
 router.post('/register', authController.register);
 router.post('/login', authController.login);
-
-router.use(isAuth);
-
-router.post('/refresh', authController.refreshToken);
 router.get('/verify/:token', authController.verifyEmail);
-router.post('/logout', authController.logout);
+router.post('/refresh', isAuth, authController.refreshToken);
+router.post('/logout', isAuth, authController.logout);
 
 module.exports = router;

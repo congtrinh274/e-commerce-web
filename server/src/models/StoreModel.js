@@ -10,9 +10,8 @@ const StoreSchema = new Schema(
         name: {
             type: String,
             required: true,
-            unique: true,
         },
-        description: {
+        bio: {
             type: String,
             required: true,
         },
