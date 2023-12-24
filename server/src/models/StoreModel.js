@@ -13,7 +13,6 @@ const StoreSchema = new Schema(
         },
         bio: {
             type: String,
-            required: true,
         },
         owner: {
             type: Schema.Types.ObjectId,
@@ -29,6 +28,12 @@ const StoreSchema = new Schema(
             {
                 type: Schema.Types.ObjectId,
                 ref: 'Product',
+            },
+        ],
+        categories: [
+            {
+                type: Schema.Types.ObjectId,
+                ref: 'Category',
             },
         ],
         shedAddress: {

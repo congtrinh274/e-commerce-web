@@ -18,7 +18,7 @@ class AuthController {
         if (emailExist) return res.status(400).send({ error: 'Email already exist!' });
 
         try {
-            const { username, email, password } = req.body;
+            const { username, email, password, imageURL } = req.body;
 
             const hashedPassword = await hashPassword(password);
 
@@ -26,6 +26,7 @@ class AuthController {
                 username,
                 email,
                 password: hashedPassword,
+                imageURL,
             });
 
             await user.save();

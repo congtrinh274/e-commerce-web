@@ -9,7 +9,6 @@ const CategorySchema = new Schema(
     {
         name: {
             type: String,
-            required: true,
         },
         icon: {
             type: String,
@@ -21,6 +20,11 @@ const CategorySchema = new Schema(
             type: String,
             slug: 'name',
             unique: true,
+        },
+        store: {
+            type: Schema.Types.ObjectId,
+            ref: 'Store',
+            required: true,
         },
     },
     {

@@ -21,6 +21,9 @@ const UserSchema = new Schema(
             type: String,
             required: true,
         },
+        imageURL: {
+            type: String,
+        },
         role: {
             type: String,
             enum: ['buyer', 'seller', 'both'],
