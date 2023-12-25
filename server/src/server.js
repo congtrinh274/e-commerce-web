@@ -17,6 +17,7 @@ app.use(cors());
 
 //Use static folder
 app.use(express.static(path.join(__dirname, 'public')));
+app.use('/uploads', express.static('uploads'));
 
 // Middleware handle body data of post method
 app.use(bodyParser.urlencoded({ extended: true }));

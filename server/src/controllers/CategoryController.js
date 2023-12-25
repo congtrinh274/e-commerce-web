@@ -1,5 +1,6 @@
 require('dotenv').config();
 
+const upload = require('../middlewares/multer.middleware');
 const Category = require('../models/CategoryModel');
 const Store = require('../models/StoreModel');
 
@@ -18,7 +19,7 @@ class CategoryController {
     // [POST] category/create
     create = async (req, res) => {
         try {
-            const { name, icon, description } = req.body;
+            const { name, description } = req.body;
             const store = await Store.findOne({ owner: req.user._id }).populate('categories');
 
             const existingCategory = store.categories.find((category) => category.name === name);
@@ -26,6 +27,8 @@ class CategoryController {
             if (existingCategory) {
                 return res.status(400).json({ error: 'Category already exists in the store' });
             }
+
+            const icon = req.file.path;
 
             const newCategory = new Category({ name, icon, description, store: store._id });
             await newCategory.save();
