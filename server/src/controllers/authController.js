@@ -3,6 +3,17 @@ const db = require('../config/db').promise();
 const bcrypt = require('bcrypt');
 const { v4: uuidv4 } = require('uuid');
 const nodemailer = require('nodemailer');
+const jwt = require('jsonwebtoken');
+
+function generateToken(userId, email, role) {
+  const payload = { userId, email, role };
+  const secretKey = 'your-secret-key'; // Replace with your own secret key
+  const options = { expiresIn: '1h' }; // Set the expiration time for the token
+
+  return jwt.sign(payload, secretKey, options);
+}
+
+// ... (other imports and code)
 
 exports.login = async (req, res) => {
   const { email, password } = req.body;
@@ -14,7 +25,6 @@ exports.login = async (req, res) => {
       console.log('User not found');
       return res.status(401).json({ error: 'Login failed' });
     }
-
     const user = results[0];
 
     if (user.password) {
@@ -22,7 +32,11 @@ exports.login = async (req, res) => {
 
       if (passwordMatch) {
         console.log('Login successful');
-        res.status(200).json({ message: 'Login successful', user });
+        
+        // Generate a JWT token
+        const token = generateToken(user.user_id, user.email, user.role);
+        
+        res.json({ user, token });
       } else {
         console.log('Login failed: Incorrect password');
         res.status(401).json({ error: 'Login failed' });
@@ -52,14 +66,17 @@ exports.register = async (req, res) => {
     // Save the user to the database without email verification
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    await db.query('INSERT INTO users (email, password, role) VALUES (?, ?, ?)', [
+    const [result] = await db.query('INSERT INTO users (email, password, role) VALUES (?, ?, ?)', [
       email,
       hashedPassword,
       role,
     ]);
 
+    // Generate a JWT token
+    const token = generateToken(result.insertId, email, role);
+
     console.log('Registration successful');
-    res.status(200).json({ message: 'Registration successful. You can now login.' });
+    res.status(200).json({ message: 'Registration successful. You can now login.', token });
   } catch (error) {
     console.error('Error during registration:', error);
     res.status(500).json({ error: 'Internal Server Error' });
