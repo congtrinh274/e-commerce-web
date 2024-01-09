@@ -1,5 +1,6 @@
 // controllers/productController.js
 const Product = require('../models/Product');
+const path = require('path');
 
 exports.getAllProducts = async (req, res) => {
   try {
@@ -10,7 +11,6 @@ exports.getAllProducts = async (req, res) => {
     res.status(500).json({ message: 'Internal Server Error' });
   }
 };
-
 exports.getProductById = async (req, res) => {
   const productId = req.params.id;
 
@@ -29,10 +29,9 @@ exports.getProductById = async (req, res) => {
 };
 exports.createProduct = async (req, res) => {
   try {
-    const { productName, description, category, variations } = req.body;
-    console.log('Received request:', req.body); 
+    const { user_id, productName, description, category, variations } = req.body;
+    console.log('Received request:', req.body);
 
-    // Check if the required fields are present
     if (!productName || !description || !category || !variations) {
       console.log('Missing required fields');
       return res.status(400).json({ message: 'Missing required fields' });
@@ -40,30 +39,48 @@ exports.createProduct = async (req, res) => {
 
     const variationsArray = JSON.parse(variations);
 
-    // Check if images are present
-    if (!req.files || req.files.length === 0) {
-      console.log('No image files provided');
-      return res.status(400).json({ message: 'No image files provided' });
+    if (!variationsArray || variationsArray.length === 0) {
+      console.log('No variations provided');
+      return res.status(400).json({ message: 'No variations provided' });
     }
 
-    const images = req.files.map((file) => file.path);
+    // const imagesArray = [];
+    
+    // for (let i = 0; i < variationsArray.length; i++) {
+    //   const image = req.file;
+
+    //   if (!image) {
+    //     console.log('No image file uploaded');
+    //     return res.status(400).json({ message: 'No image file uploaded' });
+    //   }
+
+    //   const imageFileName = `variant_${i}_${Date.now()}${path.extname(image.originalname)}`;
+
+    //   imagesArray.push(imageFileName);
+
+    //   await image.mv(path.join(__dirname, '../../../client/public/uploads', imageFileName));
+    // }
+
+    // for (let i = 0; i < variationsArray.length; i++) {
+    //   variationsArray[i].image = imagesArray[i];
+    // }
 
     const productId = await Product.createProduct(
+      user_id,
       productName,
       description,
       category,
-      variationsArray,
-      images
+      variationsArray
     );
 
     console.log('Product created successfully');
     res.json({ productId });
   } catch (error) {
-    console.error(error);
-    console.log('Internal Server Error');
+    console.error('Error creating product:', error.message);
     res.status(500).json({ message: 'Internal Server Error' });
   }
 };
+
 
 exports.updateProduct = async (req, res) => {
   const productId = req.params.id;
