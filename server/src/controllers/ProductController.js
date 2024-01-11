@@ -1,13 +1,15 @@
 require('dotenv').config();
 
+const upload = require('../middlewares/multer.middleware');
 const Product = require('../models/ProductModel');
 const Category = require('../models/CategoryModel');
+const Store = require('../models/StoreModel');
 
 class ProductController {
     // [GET] products/
     show = async (req, res) => {
         try {
-            const products = await Product.find();
+            const products = await Product.find().populate('store');
             res.status(200).json(products);
         } catch (error) {
             console.error(error);
@@ -38,9 +40,12 @@ class ProductController {
     // [POST] products/create
     create = async (req, res) => {
         try {
-            const { name, description, price, countInStock, images, categoryId } = req.body;
+            const { name, description, price, countInStock, categoryId } = req.body;
             const sellerID = req.user._id;
             const storeID = req.user.store;
+            const store = await Store.findOne({ owner: sellerID }).populate('products');
+
+            const images = req.file.path;
 
             const product = new Product({
                 name,
@@ -52,6 +57,9 @@ class ProductController {
                 seller: sellerID,
                 category: categoryId,
             });
+
+            store.products.push(product);
+            await store.save();
 
             await product.save();
 
