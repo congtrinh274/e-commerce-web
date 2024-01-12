@@ -25,9 +25,9 @@ const categoriesController = {
 
   addCategory: async (req, res) => {
     const { name } = req.body;
-
+    const image = req.file ? `/uploads/${req.file.filename}` : null;
     try {
-      await Category.addCategory(name);
+      await Category.addCategory(name, image);
       res.status(201).json({ message: 'Category added successfully' });
     } catch (error) {
       console.error(error);
@@ -38,9 +38,9 @@ const categoriesController = {
   editCategory: async (req, res) => {
     const { categoryId } = req.params;
     const { name } = req.body;
-
+    const image = req.file ? `/uploads/${req.file.filename}` : null;
     try {
-      await Category.editCategory(categoryId, name);
+      await Category.editCategory(categoryId, name,image);
       res.json({ message: 'Category edited successfully' });
     } catch (error) {
       console.error(error);
@@ -58,19 +58,17 @@ const categoriesController = {
       res.status(500).json({ message: 'Internal Server Error' });
     }
   },
-
-  addChildCategory: async (req, res) => {
-    const { parentCategoryId, name } = req.body;
-
-    try {
-      await Category.addChildCategory(parentCategoryId, name);
-      res.status(201).json({ message: 'Child category added successfully' });
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: 'Internal Server Error' });
-    }
-  },
-
+addChildCategory: async (req, res) => {
+  const { parentCategoryId, name } = req.body;
+  const image = req.file ? `/uploads/${req.file.filename}` : null;
+  try {
+    await Category.addChildCategory(parentCategoryId, name, image);
+    res.status(201).json({ message: 'Child category added successfully' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+},
   editChildCategory: async (req, res) => {
     const { categoryId } = req.params;
     const { name } = req.body;

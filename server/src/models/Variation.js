@@ -9,7 +9,7 @@ const Variation = {
       throw error;
     }
   },
-  getAllCategories: async (parent_category_id) => {
+  getAllChildCategories: async (parent_category_id) => {
     try {
       const [rows] = await db.query('SELECT * FROM categories WHERE parent_category_id = ?', [parent_category_id]);
       return rows;

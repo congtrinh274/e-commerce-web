@@ -44,26 +44,6 @@ exports.createProduct = async (req, res) => {
       return res.status(400).json({ message: 'No variations provided' });
     }
 
-    // const imagesArray = [];
-    
-    // for (let i = 0; i < variationsArray.length; i++) {
-    //   const image = req.file;
-
-    //   if (!image) {
-    //     console.log('No image file uploaded');
-    //     return res.status(400).json({ message: 'No image file uploaded' });
-    //   }
-
-    //   const imageFileName = `variant_${i}_${Date.now()}${path.extname(image.originalname)}`;
-
-    //   imagesArray.push(imageFileName);
-
-    //   await image.mv(path.join(__dirname, '../../../client/public/uploads', imageFileName));
-    // }
-
-    // for (let i = 0; i < variationsArray.length; i++) {
-    //   variationsArray[i].image = imagesArray[i];
-    // }
 
     const productId = await Product.createProduct(
       user_id,
@@ -84,11 +64,22 @@ exports.createProduct = async (req, res) => {
 
 exports.updateProduct = async (req, res) => {
   const productId = req.params.id;
-  const { name, description, price } = req.body;
+  const { label } = req.body;
 
   try {
-    await Product.updateProduct(productId, name, description, price);
+    await Product.updateProduct(productId, label);
     res.json({ message: 'Product updated successfully' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+  
+};
+exports.deleteProduct = async (req, res) => {
+  const productId = req.params.id;
+  try {
+    await Product.deleteProduct(productId);
+    res.json({ message: 'Product delete successfully' });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Internal Server Error' });

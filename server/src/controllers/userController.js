@@ -14,6 +14,24 @@ exports.getAllUsers = async (req, res) => {
         res.status(500).json({ message: 'Internal Server Error' });
     }
 };
+exports.getAllBuyer = async (req, res) => {
+    try {
+        const users = await User.getAllBuyer();
+        res.json(users);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Internal Server Error' });
+    }
+};
+exports.getAllSeller = async (req, res) => {
+    try {
+        const users = await User.getAllSeller();
+        res.json(users);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Internal Server Error' });
+    }
+};
 
 exports.getUserById = async (req, res) => {
     const userId = req.params.id;

@@ -20,21 +20,23 @@ const Category = {
     }
   },
 
-  addCategory: async (name) => {
+  addCategory: async (name,image) => {
     try {
-      const query = 'INSERT INTO parent_categories (name) VALUES (?)';
-      await db.query(query, [name]);
+      const query = 'INSERT INTO parent_categories (name,img) VALUES (?,?)';
+      await db.query(query, [name,image]);
     } catch (error) {
       throw error;
     }
   },
 
-  editCategory: async (categoryId, name) => {
+  editCategory: async (categoryId,name,image) => {
     try {
-      const query = 'UPDATE parent_categories SET name = ? WHERE parent_category_id = ?';
-      await db.query(query, [name, categoryId]);
+      const query = 'UPDATE parent_categories SET name = ?, img = ? WHERE parent_category_id = ?';
+      await db.query(query, [name, image, categoryId]);
+      res.json({ message: 'Category edited successfully' });
     } catch (error) {
-      throw error;
+      console.error(error);
+      res.status(500).json({ message: 'Internal Server Error' });
     }
   },
 
@@ -47,15 +49,14 @@ const Category = {
     }
   },
 
-  addChildCategory: async (parentCategoryId, name) => {
+  addChildCategory: async (parentCategoryId,name) => {
     try {
-      const query = 'INSERT INTO categories (parent_category_id, name) VALUES (?, ?)';
-      await db.query(query, [parentCategoryId, name]);
+      const query = 'INSERT INTO categories (parent_category_id,name) VALUES (?, ?)';
+      await db.query(query, [parentCategoryId,name]);
     } catch (error) {
       throw error;
     }
   },
-
   editChildCategory: async (categoryId, name) => {
     try {
       const query = 'UPDATE categories SET name = ? WHERE category_id = ?';

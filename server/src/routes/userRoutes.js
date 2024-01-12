@@ -51,6 +51,8 @@ const router = express.Router();
 const userController = require('../controllers/userController');
 
 router.get('/', userController.getAllUsers);
+router.get('/seller', userController.getAllSeller);
+router.get('/buyer', userController.getAllBuyer);
 router.post('/', userController.createUser);
 router.get('/:id', userController.getUserById);
 router.put('/:id', userController.updateUser);

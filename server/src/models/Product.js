@@ -7,6 +7,8 @@ const Product = {
         SELECT
           products.product_id,
           products.name,
+          products.quantitySaled,
+          products.label,
           GROUP_CONCAT(DISTINCT IFNULL(product_variants.price, '')) AS prices,
           GROUP_CONCAT(DISTINCT IFNULL(product_variants.img_url, '')) AS image_urls
         FROM
@@ -17,10 +19,13 @@ const Product = {
       `);
 
       const productsWithImagesAndPrices = rows.map(row => ({
+
         product_id: row.product_id,
         name: row.name,
         prices: row.prices ? row.prices.split(',').map(price => (price ? parseFloat(price) : null)) : [],
         image_urls: row.image_urls ? row.image_urls.split(',') : [],
+        label:row.label,
+        quantitySaled:row.quantitySaled,
       }));
 
       return productsWithImagesAndPrices;
@@ -85,11 +90,11 @@ const Product = {
       if (!productName) {
         throw new Error('Product name cannot be null');
       }
-  
-      // Insert into the products table
+      const quantitySaled= 0;
+      const label= 'Nomal';
       const [productResult] = await db.query(
-        'INSERT INTO products (user_id, name, description, category_id) VALUES (?, ?, ?, ?)',
-        [user_id, productName, description, category]
+        'INSERT INTO products (user_id, name, description, category_id,quantitySaled,label) VALUES (?, ?, ?, ?,?,?)',
+        [user_id, productName, description, category,quantitySaled,label]
       );
   
       const productId = productResult.insertId;
@@ -127,9 +132,14 @@ const Product = {
   },
 
 
-  updateProduct: async (productId, name, description, price) => {
-    await db.query('UPDATE products SET name = ?, description = ?, price = ? WHERE product_id = ?', [name, description, price, productId]);
-  }
+  updateProduct: async (productId, label) => {
+    await db.query('UPDATE products SET label = ? WHERE product_id = ?', [label,productId]);
+  },
+  deleteProduct: async (productId) => {
+    await db.query('DELETE FROM products WHERE product_id = ?', [productId]);
+  },
+  
+  
 };
 
 module.exports = Product;

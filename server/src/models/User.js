@@ -6,6 +6,16 @@ const User = {
         const [rows] = await db.query('SELECT * FROM users');
         return rows;
     },
+    getAllBuyer: async () => {
+        const [rows] = await db.query('SELECT * FROM users WHERE role = \'buyer\'');
+        return rows;
+    },
+    
+    getAllSeller: async () => {
+        const [rows] = await db.query('SELECT * FROM users WHERE role = \'seller\'');
+        return rows;
+    },
+
     getUserById: async (userId) => {
         const [rows] = await db.query('SELECT * FROM users WHERE user_id = ?', [userId]);
         return rows[0];
