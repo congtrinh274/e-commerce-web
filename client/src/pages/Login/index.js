@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import {
     Box,
@@ -22,6 +22,7 @@ import { loginValidate as validate } from '~/utils/validator';
 import config from '~/config';
 
 const Login = () => {
+    const user = useSelector((state) => state.auth.user);
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const [loading, setLoading] = useState(false);
@@ -31,6 +32,15 @@ const Login = () => {
     const handleGoBack = () => {
         navigate('/');
     };
+
+    useEffect(() => {
+        if (user && user.isAdmin === false) {
+            navigate('/');
+        }
+        if (user && user.isAdmin) {
+            navigate('/admin');
+        }
+    }, [user]);
 
     const submit = async (event) => {
         event.preventDefault();
@@ -44,7 +54,6 @@ const Login = () => {
             }
 
             await dispatch(login(email, password));
-            navigate('/');
         } catch (error) {
             if (error.message === 'Request timeout') {
                 toast.error(error.message || 'Đã xảy ra lỗi!', { position: 'top-right' });
@@ -84,8 +93,15 @@ const Login = () => {
                             <Input type="password" onChange={(event) => setPassword(event.target.value)} />
                         </FormControl>
 
-                        <Button colorScheme="teal" width="full" mt={4} type="submit">
-                            Sign In
+                        <Button
+                            colorScheme="teal"
+                            width="full"
+                            mt={4}
+                            type="submit"
+                            isLoading={loading}
+                            loadingText="Đang xử lý..."
+                        >
+                            {loading ? null : 'Sign In'}
                         </Button>
                     </form>
 

@@ -1,6 +1,5 @@
 export const loginValidate = (values) => {
     const errors = {};
-    console.log(values);
     if (!values.email) {
         return 'Email không được bỏ trống';
     } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(values.email)) {
