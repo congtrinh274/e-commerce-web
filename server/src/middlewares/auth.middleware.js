@@ -29,4 +29,20 @@ const isAuth = async (req, res, next) => {
     return next();
 };
 
-module.exports = { isAuth };
+const isAdmin = async (req, res, next) => {
+    const accessTokenFromHeader = req.headers.x_authorization;
+    const accessTokenSecret = process.env.ACCESS_TOKEN_SECRET;
+    const verified = await verifyToken(accessTokenFromHeader, accessTokenSecret);
+    if (!verified) {
+        return res.status(401).send('Bạn không có quyền truy cập vào tính năng này!');
+    }
+
+    const user = await User.findOne({ _id: verified.payload.userID });
+    if (user.isAdmin) {
+        next();
+    } else {
+        return res.status(401).send('Only admin can access!');
+    }
+};
+
+module.exports = { isAuth, isAdmin };

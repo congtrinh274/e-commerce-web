@@ -6,6 +6,8 @@ const routes = {
     home: '/',
     login: '/login',
     register: '/register',
+    verifying: '/verifying',
+    verified: '/verified/:token',
 };
 
 export default routes;

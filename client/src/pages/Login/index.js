@@ -1,4 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import {
     Box,
     Container,
@@ -13,14 +15,44 @@ import {
     IconButton,
 } from '@chakra-ui/react';
 import { FaGoogle, FaFacebook, FaArrowLeft } from 'react-icons/fa';
-import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { login } from '~/redux/features/authSlices';
+import { loginValidate as validate } from '~/utils/validator';
 import config from '~/config';
 
 const Login = () => {
     const navigate = useNavigate();
+    const dispatch = useDispatch();
+    const [loading, setLoading] = useState(false);
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
 
     const handleGoBack = () => {
         navigate('/');
+    };
+
+    const submit = async (event) => {
+        event.preventDefault();
+        try {
+            setLoading(true);
+            const formErrors = validate({ email, password });
+            if (Object.keys(formErrors).length > 0) {
+                toast.error(formErrors, { position: 'top-right' });
+                setLoading(false);
+                return;
+            }
+
+            await dispatch(login(email, password));
+            navigate('/');
+        } catch (error) {
+            if (error.message === 'Request timeout') {
+                toast.error(error.message || 'Đã xảy ra lỗi!', { position: 'top-right' });
+            } else {
+                toast.error(error, { position: 'top-right' });
+            }
+            setLoading(false);
+        }
     };
 
     return (
@@ -41,15 +73,15 @@ const Login = () => {
                         </Heading>
                     </HStack>
 
-                    <form>
+                    <form onSubmit={submit} noValidate>
                         <FormControl id="email" isRequired>
                             <FormLabel>Email address</FormLabel>
-                            <Input type="email" />
+                            <Input type="email" onChange={(event) => setEmail(event.target.value)} />
                         </FormControl>
 
                         <FormControl mt={4} id="password" isRequired>
                             <FormLabel>Password</FormLabel>
-                            <Input type="password" />
+                            <Input type="password" onChange={(event) => setPassword(event.target.value)} />
                         </FormControl>
 
                         <Button colorScheme="teal" width="full" mt={4} type="submit">

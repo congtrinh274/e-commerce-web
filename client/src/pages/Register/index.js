@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
     Box,
     Container,
@@ -12,17 +12,49 @@ import {
     HStack,
     IconButton,
 } from '@chakra-ui/react';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { FaGoogle, FaFacebook, FaArrowLeft } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import config from '~/config';
+import { registerValidate as validate } from '~/utils/validator';
+import { register } from '~/redux/features/authSlices';
+import { useDispatch } from 'react-redux';
 
 const Register = () => {
     const navigate = useNavigate();
+    const dispatch = useDispatch();
+
+    const [loading, setLoading] = useState(false);
+    const [inputData, setInputData] = useState({ username: '', email: '', password: '', confirmPassword: '' });
 
     const handleGoBack = () => {
         navigate(-1);
     };
 
+    const submit = async (event) => {
+        event.preventDefault();
+        try {
+            setLoading(true);
+            const { username, email, password, confirmPassword } = inputData;
+            const formErrors = validate({ username, email, password, confirmPassword });
+            if (Object.keys(formErrors).length > 0) {
+                toast.error(formErrors, { position: 'top-right' });
+                setLoading(false);
+                return;
+            }
+            await dispatch(register(username, email, password));
+            toast.success('Đăng ký thành công! Vui lòng kiểm tra email để xác nhận.');
+            navigate('/verifying');
+        } catch (error) {
+            if (error.message === 'Request timeout') {
+                toast.error(error.message || 'Đã xảy ra lỗi!', { position: 'top-right' });
+            } else {
+                toast.error(error, { position: 'top-right' });
+            }
+            setLoading(false);
+        }
+    };
     return (
         <Container maxW="3xl" centerContent>
             <Flex direction="column" align="center" justify="center" h="100vh">
@@ -41,28 +73,49 @@ const Register = () => {
                         </Heading>
                     </HStack>
 
-                    <form>
-                        <FormControl id="email" isRequired>
+                    <form onSubmit={submit} noValidate>
+                        <FormControl id="username" isRequired>
                             <FormLabel>Your name</FormLabel>
-                            <Input type="email" />
+                            <Input
+                                type="text"
+                                onChange={(event) => setInputData({ ...inputData, username: event.target.value })}
+                            />
                         </FormControl>
                         <FormControl id="email" isRequired>
                             <FormLabel>Email address</FormLabel>
-                            <Input type="email" />
+                            <Input
+                                type="email"
+                                onChange={(event) => setInputData({ ...inputData, email: event.target.value })}
+                            />
                         </FormControl>
 
                         <FormControl mt={4} id="password" isRequired>
                             <FormLabel>Password</FormLabel>
-                            <Input type="password" />
+                            <Input
+                                type="password"
+                                onChange={(event) => setInputData({ ...inputData, password: event.target.value })}
+                            />
                         </FormControl>
 
-                        <FormControl mt={4} id="password" isRequired>
+                        <FormControl mt={4} id="confirm-password" isRequired>
                             <FormLabel>Confirm password</FormLabel>
-                            <Input type="password" />
+                            <Input
+                                type="password"
+                                onChange={(event) =>
+                                    setInputData({ ...inputData, confirmPassword: event.target.value })
+                                }
+                            />
                         </FormControl>
 
-                        <Button colorScheme="teal" width="full" mt={4} type="submit">
-                            Sign Up
+                        <Button
+                            colorScheme="teal"
+                            width="full"
+                            mt={4}
+                            type="submit"
+                            isLoading={loading}
+                            loadingText="Đang xử lý..."
+                        >
+                            {loading ? null : 'Sign Up'}
                         </Button>
                     </form>
 

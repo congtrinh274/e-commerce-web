@@ -19,6 +19,7 @@ class AuthController {
 
         try {
             const { username, email, password, imageURL } = req.body;
+            const isAdmin = false;
 
             const hashedPassword = await hashPassword(password);
 
@@ -27,6 +28,7 @@ class AuthController {
                 email,
                 password: hashedPassword,
                 imageURL,
+                isAdmin,
             });
 
             await user.save();
@@ -40,7 +42,7 @@ class AuthController {
             sendMail(
                 user.email,
                 'Email Verification',
-                `Please click on the following link to verify your email: http://${currentIPv4}:${process.env.PORT}/auth/verify/${user.emailVerificationToken}`,
+                `Please click on the following link to verify your email: ${process.env.APP_BASE_URL}/verified/${user.emailVerificationToken}`,
             );
 
             res.status(201).json({

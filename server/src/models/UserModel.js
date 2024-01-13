@@ -24,6 +24,9 @@ const UserSchema = new Schema(
         imageURL: {
             type: String,
         },
+        isAdmin: {
+            type: Boolean,
+        },
         role: {
             type: String,
             enum: ['buyer', 'seller', 'both'],
