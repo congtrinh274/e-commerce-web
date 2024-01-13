@@ -20,9 +20,8 @@ class CategoryController {
     create = async (req, res) => {
         try {
             const { name, description } = req.body;
-            const store = await Store.findOne({ owner: req.user._id }).populate('categories');
 
-            const existingCategory = store.categories.find((category) => category.name === name);
+            const existingCategory = await Category.findOne({ name });
 
             if (existingCategory) {
                 return res.status(400).json({ error: 'Category already exists in the store' });
@@ -30,11 +29,8 @@ class CategoryController {
 
             const icon = req.file.path;
 
-            const newCategory = new Category({ name, icon, description, store: store._id });
+            const newCategory = new Category({ name, icon, description });
             await newCategory.save();
-
-            store.categories.push(newCategory);
-            await store.save();
 
             res.status(201).json({ data: newCategory, message: 'Category created successfully' });
         } catch (error) {

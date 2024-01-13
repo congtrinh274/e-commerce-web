@@ -21,11 +21,6 @@ const CategorySchema = new Schema(
             slug: 'name',
             unique: true,
         },
-        store: {
-            type: Schema.Types.ObjectId,
-            ref: 'Store',
-            required: true,
-        },
     },
     {
         timestamps: true,
