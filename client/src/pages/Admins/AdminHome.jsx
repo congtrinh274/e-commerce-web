@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 
 const AdminHome = () => {
     return (
-        <Flex align="center" justify="center" h="100vh" direction="column">
+        <Flex align="center" justify="center" h="50vh" direction="column">
             <Text fontSize="2xl" fontWeight="bold" mb={4}>
                 Welcome Admin
             </Text>
@@ -16,19 +16,14 @@ const AdminHome = () => {
             >
                 {/* Nhúng iframe từ Giphy */}
             </motion.div>
-            <>
+            <div>
                 <iframe
                     src="https://giphy.com/embed/Rjub7AIEIbXT0tzbr3"
-                    width="480"
-                    height="384"
-                    frameBorder="0"
-                    class="giphy-embed"
+                    width="400"
+                    height="300"
                     allowFullScreen
                 ></iframe>
-                <p>
-                    <a href="https://giphy.com/gifs/wave-morning-chill-Rjub7AIEIbXT0tzbr3">via GIPHY</a>
-                </p>
-            </>
+            </div>
         </Flex>
     );
 };

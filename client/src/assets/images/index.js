@@ -1,3 +1,4 @@
 import checkIcon from './check.png';
 import closeIcon from './close.png';
-export { checkIcon, closeIcon };
+import logo from './logo.png';
+export { checkIcon, closeIcon, logo };
