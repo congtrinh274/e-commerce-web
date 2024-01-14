@@ -16,12 +16,16 @@ import {
 import { FaShoppingCart, FaSearch } from 'react-icons/fa';
 import config from '~/config';
 import { logo } from '~/assets/images';
+import { useNavigate } from 'react-router-dom';
 
 function UserHeader() {
+    const navigate = useNavigate();
     const { auth } = JSON.parse(localStorage.getItem('appState')) || {};
+    const store = JSON.parse(localStorage.getItem('store')) || {};
     const [isLoggedOut, setLoggedOut] = useState(false);
     const handleLogout = () => {
         localStorage.removeItem('appState');
+        localStorage.removeItem('store');
         setLoggedOut(true);
     };
     return (
@@ -80,10 +84,19 @@ function UserHeader() {
                                 <MenuItem _hover={{ bg: 'teal.100' }}>Profile</MenuItem>
                                 <MenuItem _hover={{ bg: 'teal.100' }}>Favorites</MenuItem>
                                 <MenuItem _hover={{ bg: 'teal.100' }}>Your Orders</MenuItem>
-                                {auth.user.store ? (
-                                    <MenuItem _hover={{ bg: 'teal.100' }}>Your shop</MenuItem>
+                                {store._id || auth.user.store ? (
+                                    <MenuItem _hover={{ bg: 'teal.100' }} onClick={() => navigate('/store/home-store')}>
+                                        Your shop
+                                    </MenuItem>
                                 ) : (
-                                    <MenuItem _hover={{ bg: 'teal.100' }}>Become a seller?</MenuItem>
+                                    <MenuItem
+                                        _hover={{ bg: 'teal.100' }}
+                                        onClick={() => {
+                                            navigate('/store/register');
+                                        }}
+                                    >
+                                        Become a seller?
+                                    </MenuItem>
                                 )}
                                 <MenuItem _hover={{ bg: 'teal.100' }} onClick={handleLogout}>
                                     Logout

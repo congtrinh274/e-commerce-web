@@ -15,6 +15,7 @@ const storeSlices = createSlice({
         REGISTER: (state, action) => {
             state.isLoading = false;
             state.store = action.payload.data;
+            localStorage.setItem('store', JSON.stringify(action.payload.data));
         },
         REGISTER_FAILURE: (state, action) => {
             state.isLoading = false;
@@ -34,7 +35,7 @@ const storeSlices = createSlice({
 export const { REGISTER_LOADING, REGISTER, REGISTER_FAILURE, GET_STORE, CREATE_CATEGORY } = storeSlices.actions;
 
 export const registerStore =
-    (shopName, bio = '', phoneNumber, wareHouseAddress, accessToken) =>
+    (shopName, bio = '', phoneNumber, fullAddress, accessToken) =>
     async (dispatch) => {
         dispatch(REGISTER_LOADING());
         try {
@@ -44,7 +45,7 @@ export const registerStore =
                     name: shopName,
                     bio,
                     phoneNumber,
-                    shedAddress: wareHouseAddress,
+                    shedAddress: fullAddress,
                 },
                 {
                     timeout: 3000,

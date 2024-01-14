@@ -39,6 +39,8 @@ const ProductSlider = ({ products, onAddToCart, heading }) => {
                 transform="translateY(-50%)"
                 cursor="pointer"
                 _hover={{ color: 'blue.500' }}
+                zIndex={999}
+                isDisabled={products.length === 0}
             />
             <IconButton
                 icon={<FaArrowRight />}
@@ -50,6 +52,8 @@ const ProductSlider = ({ products, onAddToCart, heading }) => {
                 transform="translateY(-50%)"
                 cursor="pointer"
                 _hover={{ color: 'blue.500' }}
+                zIndex={999}
+                isDisabled={products.length === 0}
             />
             <Heading mb={4} textAlign="center">
                 {heading}

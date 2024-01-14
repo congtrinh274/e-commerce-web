@@ -43,8 +43,8 @@ export const storeRegisterValidator = (values) => {
     if (!values.shopName) {
         return 'Vui lòng Nhập tên cửa hàng!';
     }
-    if (!values.wareHouseAddress) {
-        return 'Vui lòng Nhập địa chỉ lấy hàng!';
+    if (!values.fullAddress) {
+        return 'Vui lòng nhập đầy đủ địa chỉ lấy hàng!';
     }
     if (!values.email) {
         return 'Vui lòng Nhập email!';

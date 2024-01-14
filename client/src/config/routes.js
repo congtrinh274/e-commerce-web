@@ -8,6 +8,8 @@ const routes = {
     register: '/register',
     verifying: '/verifying',
     verified: '/verified/:token',
+    homeStore: '/store/home-store',
+    registerStore: '/store/register',
 };
 
 export default routes;
