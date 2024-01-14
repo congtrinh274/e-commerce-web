@@ -51,11 +51,7 @@ export const addProduct =
         data.append('price', price);
         data.append('countInStock', countInStock);
         data.append('categoryId', categoryId);
-        data.append('images', {
-            uri: thumbnail,
-            type: 'image/jpg',
-            name: 'product-image.jpg',
-        });
+        data.append('images', thumbnail);
         try {
             const response = await axios.post('http://192.168.0.104:5000/products/create', data, {
                 timeout: 3000,
@@ -64,7 +60,7 @@ export const addProduct =
                     x_authorization: accessToken,
                 },
             });
-
+            console.log(response.data);
             dispatch(ADD_PRODUCT(response.data));
         } catch (error) {
             if (error.code === 'ECONNABORTED') {

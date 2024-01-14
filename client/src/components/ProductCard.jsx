@@ -2,9 +2,11 @@ import React from 'react';
 import { Box, Image, Text, Button, Flex, IconButton } from '@chakra-ui/react';
 import { checkIcon } from '~/assets/images';
 import { FaHeart } from 'react-icons/fa';
+import replaceImageUrl from '~/utils/replaceImage';
 
 const ProductCard = ({ product, onAddToCart }) => {
     // const { name, description, price, image } = product;
+    const productImage = replaceImageUrl(product.images[0], 'http://localhost:5000');
 
     return (
         <Box
@@ -18,14 +20,14 @@ const ProductCard = ({ product, onAddToCart }) => {
             mr={5}
             ml={5}
         >
-            <Image src={checkIcon} boxSize="200px" objectFit="cover" mx="auto" mt="4" />
+            <Image src={productImage} boxSize="200px" objectFit="cover" mx="auto" mt="4" />
             <Box p="4" flexGrow={1}>
                 <Flex direction="column" justifyContent="space-between" h="100%" mt={12}>
                     <Flex align="baseline" justifyContent="space-between">
                         <Text fontSize="md" fontWeight="semibold" mr={2}>
                             {product.name}
                         </Text>
-                        <Text color="gray.500">{`$500`}</Text>
+                        <Text color="gray.500">{`$${product.price}`}</Text>
                     </Flex>
                     <Text mt={2} color="gray.600">
                         {product.description}
@@ -33,9 +35,12 @@ const ProductCard = ({ product, onAddToCart }) => {
                     <Text mt={2} color="gray.600">
                         Ratings: {product.ratings} / 5
                     </Text>
-                    <Text mt="2" color="teal.500">
-                        Shop: {product.shop}
-                    </Text>
+                    <Flex mt="2" color="teal.500" alignItems="center">
+                        Shop:{' '}
+                        <Text color="red" ml={2}>
+                            {product.store.name}
+                        </Text>
+                    </Flex>
                     <Flex justifyContent="space-between" alignItems="center" mt={10}>
                         <IconButton
                             icon={<FaHeart size="0.6rem" />}

@@ -22,11 +22,10 @@ function UserHeader() {
     const navigate = useNavigate();
     const { auth } = JSON.parse(localStorage.getItem('appState')) || {};
     const store = JSON.parse(localStorage.getItem('store')) || {};
-    const [isLoggedOut, setLoggedOut] = useState(false);
     const handleLogout = () => {
         localStorage.removeItem('appState');
         localStorage.removeItem('store');
-        setLoggedOut(true);
+        navigate('/');
     };
     return (
         <Flex p={4} bg="teal.600" color="white" align="center" justify="space-between" pl="24" pr="24">

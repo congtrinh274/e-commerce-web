@@ -24,7 +24,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { FaEdit, FaTrash, FaPlus } from 'react-icons/fa';
 import axios from 'axios';
 import replaceImageUrl from '~/utils/replaceImage';
-import ImageUploader from '~/components/ImageLoad';
+import ImageUploader from '~/components/ImageLoader';
 import { useSelector } from 'react-redux';
 
 function Categories() {

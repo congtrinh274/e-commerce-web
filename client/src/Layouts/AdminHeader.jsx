@@ -23,6 +23,7 @@ import {
 import config from '~/config';
 
 const AdminHeader = () => {
+    const navigate = useNavigate('/');
     const user = useSelector((state) => state.auth.user);
     const { isOpen, onOpen, onClose } = useDisclosure();
     const [adminInfo, setAdminInfo] = React.useState({
@@ -38,6 +39,11 @@ const AdminHeader = () => {
             name: prevInfo.name === 'Admin Name' ? 'Updated Admin' : 'Admin Name',
         }));
         onClose();
+    };
+    const handleLogout = () => {
+        localStorage.removeItem('appState');
+        localStorage.removeItem('store');
+        navigate('/');
     };
 
     return (
@@ -64,7 +70,7 @@ const AdminHeader = () => {
                     <ListItem mr={4}>
                         <Link to={config.routes.usersManager}>User Manager</Link>
                     </ListItem>
-                    <ListItem mr={4}>
+                    <ListItem mr={4} onClick={handleLogout}>
                         <Link to={config.routes.usersManager}>Log out</Link>
                     </ListItem>
                 </List>
