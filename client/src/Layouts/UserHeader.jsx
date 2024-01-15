@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     Flex,
     Box,
@@ -17,16 +17,20 @@ import { FaShoppingCart, FaSearch } from 'react-icons/fa';
 import config from '~/config';
 import { logo } from '~/assets/images';
 import { useNavigate } from 'react-router-dom';
+import { useCart } from '~/contexts/cartContext';
 
 function UserHeader() {
     const navigate = useNavigate();
     const { auth } = JSON.parse(localStorage.getItem('appState')) || {};
     const store = JSON.parse(localStorage.getItem('store')) || {};
+    const { cart } = useCart();
+
     const handleLogout = () => {
         localStorage.removeItem('appState');
         localStorage.removeItem('store');
         navigate('/');
     };
+
     return (
         <Flex p={4} bg="teal.600" color="white" align="center" justify="space-between" pl="24" pr="24">
             <Box>
@@ -58,13 +62,29 @@ function UserHeader() {
 
             <Box ml={4}>
                 <Flex>
-                    <IconButton
-                        aria-label="Shopping Cart"
-                        icon={<FaShoppingCart />}
-                        size="md"
-                        colorScheme="whiteAlpha"
-                        mr={8}
-                    />
+                    <Box position="relative" onClick={() => navigate('/cart')}>
+                        <IconButton
+                            aria-label="Shopping Cart"
+                            icon={<FaShoppingCart />}
+                            size="md"
+                            colorScheme="whiteAlpha"
+                            mr={8}
+                        ></IconButton>
+                        {cart.length > 0 && (
+                            <Box
+                                position="absolute"
+                                top="-8px"
+                                right="25px"
+                                bg="red"
+                                color="white"
+                                borderRadius="50%"
+                                padding="2px 6px"
+                                fontSize="xs"
+                            >
+                                {cart.length}
+                            </Box>
+                        )}
+                    </Box>
                     {auth && auth.user.username ? (
                         <Menu>
                             <MenuButton as={Flex} align="center" cursor="pointer">

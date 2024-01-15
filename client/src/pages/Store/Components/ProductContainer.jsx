@@ -26,7 +26,7 @@ import ImageUploader from '~/components/ImageLoader';
 import { useDispatch, useSelector } from 'react-redux';
 import { addProduct } from '~/redux/features/productSlices';
 
-const ProductContainer = () => {
+const ProductContainer = ({ sellerMode }) => {
     const dispatch = useDispatch();
     const accessToken = useSelector((state) => state.auth.accessToken);
     const store = useSelector((state) => state.store.store);
@@ -58,9 +58,11 @@ const ProductContainer = () => {
         getCategories();
     }, []);
 
-    const filteredProducts = products.filter((product) => {
-        return selectedCategory === 'all' || product.category === selectedCategory;
-    });
+    const filteredProducts =
+        products &&
+        products.filter((product) => {
+            return selectedCategory === 'all' || product.category === selectedCategory;
+        });
 
     const totalProducts = filteredProducts && filteredProducts.length;
     const totalPages = Math.ceil(totalProducts / productsPerPage);
@@ -139,7 +141,9 @@ const ProductContainer = () => {
             </Stack>
             <SimpleGrid columns={4} spacing={5}>
                 {paginatedProducts &&
-                    paginatedProducts.map((product) => <ProductCard key={product._id} product={product} />)}
+                    paginatedProducts.map((product) => (
+                        <ProductCard key={product._id} product={product} sellerMode={sellerMode} />
+                    ))}
             </SimpleGrid>
             <Box mt={4} textAlign="center">
                 {Array.from({ length: totalPages }).map((_, index) => (

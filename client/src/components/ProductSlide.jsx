@@ -6,7 +6,7 @@ import ProductCard from './ProductCard';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 
-const ProductSlider = ({ products, onAddToCart, heading }) => {
+const ProductSlider = ({ products, onAddToCart, heading, sellerMode }) => {
     const settings = {
         dots: true,
         infinite: true,
@@ -61,7 +61,7 @@ const ProductSlider = ({ products, onAddToCart, heading }) => {
             {products[0] ? (
                 <Slider ref={sliderRef} {...settings}>
                     {products.map((product, index) => (
-                        <ProductCard key={index} product={product} onAddToCart={onAddToCart} />
+                        <ProductCard key={index} product={product} onAddToCart={onAddToCart} sellerMode={sellerMode} />
                     ))}
                 </Slider>
             ) : (

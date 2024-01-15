@@ -6,6 +6,8 @@ import Register from '~/pages/Register';
 import { Verifying, Verified } from '~/pages/Verify';
 import RegisterStore from '~/pages/Store/RegisterStore';
 import HomeStore from '~/pages/Store/HomeStore';
+import ProductDetail from '~/pages/Product';
+import Cart from '~/pages/Cart';
 
 // Public routes
 const publicRoutes = [
@@ -20,6 +22,8 @@ const publicRoutes = [
     { path: config.routes.verified, components: Verified },
     { path: config.routes.registerStore, components: RegisterStore },
     { path: config.routes.homeStore, components: HomeStore },
+    { path: config.routes.productDetail, components: ProductDetail },
+    { path: config.routes.cart, components: Cart },
 ];
 
 // Private routes

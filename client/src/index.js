@@ -5,13 +5,16 @@ import { Provider } from 'react-redux';
 import store from '~/redux/store';
 import { ToastContainer } from 'react-toastify';
 import App from './App';
+import { CartProvider } from './contexts/cartContext';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
     <Provider store={store}>
         <ChakraProvider>
-            <App />
-            <ToastContainer />
+            <CartProvider>
+                <App />
+                <ToastContainer />
+            </CartProvider>
         </ChakraProvider>
     </Provider>,
 );

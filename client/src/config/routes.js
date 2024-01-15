@@ -10,6 +10,8 @@ const routes = {
     verified: '/verified/:token',
     homeStore: '/store/home-store',
     registerStore: '/store/register',
+    productDetail: '/products/product-detail',
+    cart: '/cart',
 };
 
 export default routes;
