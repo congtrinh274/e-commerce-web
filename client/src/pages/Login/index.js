@@ -35,7 +35,11 @@ const Login = () => {
 
     useEffect(() => {
         if (user && user.isAdmin === false) {
-            navigate('/');
+            if (user.emailVerified) {
+                navigate('/');
+            } else {
+                navigate('/login');
+            }
         }
         if (user && user.isAdmin) {
             navigate('/admin');

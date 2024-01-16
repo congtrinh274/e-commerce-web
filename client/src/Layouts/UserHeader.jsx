@@ -97,7 +97,7 @@ function UserHeader() {
                             </Box>
                         )}
                     </Box>
-                    {auth && auth.user.username ? (
+                    {auth && auth.user.emailVerified ? (
                         <Menu>
                             <MenuButton as={Flex} align="center" cursor="pointer">
                                 <Flex alignItems="center">

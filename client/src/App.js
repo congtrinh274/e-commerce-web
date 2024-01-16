@@ -10,7 +10,6 @@ import UserDefaultLayout from './Layouts/UserDefaultLayout';
 function App() {
     const dispatch = useDispatch();
     const user = useSelector((state) => state.auth.user);
-    const products = useSelector((state) => state.products.products);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -22,17 +21,8 @@ function App() {
             }
         };
 
-        // Check if products are not available in the store
-        if (!products || products.length === 0) {
-            // Fetch products only if not already available
-            fetchData();
-        }
+        fetchData();
     }, []);
-
-    // Wait until products are available before rendering the app
-    if (!products || products.length === 0) {
-        return <div>Loading...</div>; // You can render a loading spinner or any other loading indicator
-    }
 
     return (
         <Router>

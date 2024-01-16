@@ -103,7 +103,7 @@ const ProductContainer = ({ sellerMode = true }) => {
             const thumbnail = newProduct.image;
             console.log(thumbnail);
             await dispatch(addProduct(name, description, price, countInStock, categoryId, thumbnail, accessToken));
-            toast.success('Notify', 'Add new product successfully!');
+            toast.success('Add new product successfully!');
         } catch (error) {
             if (error.message === 'Request timeout') {
                 toast.error(error.message || 'Đã xảy ra lỗi!', { position: 'top-right' });
