@@ -43,10 +43,10 @@ class StoreController {
             const store = await Store.findOne({ owner: userId })
                 .populate('owner')
                 .populate({
-                    path: 'categories',
+                    path: 'products',
                 })
                 .populate({
-                    path: 'products',
+                    path: 'orders',
                 });
             if (!store) {
                 return res.status(404).json({ error: 'Store not found' });

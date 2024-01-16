@@ -12,6 +12,7 @@ const routes = {
     registerStore: '/store/register',
     productDetail: '/products/product-detail',
     cart: '/cart',
+    userOrder: '/user-orders',
 };
 
 export default routes;

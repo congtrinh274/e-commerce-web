@@ -30,16 +30,16 @@ const StoreSchema = new Schema(
                 ref: 'Product',
             },
         ],
-        categories: [
-            {
-                type: Schema.Types.ObjectId,
-                ref: 'Category',
-            },
-        ],
         shedAddress: {
             type: String,
             required: true,
         },
+        orders: [
+            {
+                type: Schema.Types.ObjectId,
+                ref: 'Order',
+            },
+        ],
     },
     {
         timestamps: true,

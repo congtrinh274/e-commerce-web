@@ -14,7 +14,7 @@ const OrderSchema = new Schema(
         },
         seller: {
             type: Schema.Types.ObjectId,
-            ref: 'User',
+            ref: 'Store',
             required: true,
         },
         products: [
@@ -23,9 +23,18 @@ const OrderSchema = new Schema(
                 ref: 'Product',
             },
         ],
+        address: {
+            type: String,
+        },
+        phoneNumber: {
+            type: String,
+        },
         totalAmount: {
             type: Number,
             required: true,
+        },
+        paymentMethod: {
+            type: String,
         },
         status: {
             type: String,

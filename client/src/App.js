@@ -27,7 +27,7 @@ function App() {
             // Fetch products only if not already available
             fetchData();
         }
-    }, [dispatch, products]);
+    }, []);
 
     // Wait until products are available before rendering the app
     if (!products || products.length === 0) {

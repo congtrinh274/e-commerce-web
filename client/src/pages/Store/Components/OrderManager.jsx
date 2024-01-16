@@ -1,84 +1,110 @@
-import React from 'react';
-import { useTable } from 'react-table';
-import { Box, Table, Thead, Tbody, Tr, Th, Td, Select, Button, Heading } from '@chakra-ui/react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import { Box, Table, Thead, Tbody, Tr, Th, Td, Select, Heading, Stack, Image, Text } from '@chakra-ui/react';
+import { useSelector } from 'react-redux';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const OrderManager = () => {
-    // Mock data for demonstration purposes
-    const data = React.useMemo(
-        () => [
-            { id: 1, products: 'Product A', quantity: 2, price: 20, address: '123 Street, City', status: 'Pending' },
-            { id: 2, products: 'Product B', quantity: 1, price: 30, address: '456 Street, City', status: 'Delivered' },
-            // ... add more rows as needed
-        ],
-        [],
-    );
-
-    const columns = React.useMemo(
-        () => [
-            { Header: 'ID', accessor: 'id' },
-            { Header: 'Products', accessor: 'products' },
-            { Header: 'Quantity', accessor: 'quantity' },
-            { Header: 'Price', accessor: 'price' },
-            { Header: 'Address', accessor: 'address' },
-            {
-                Header: 'Status',
-                accessor: 'status',
-                Cell: ({ row }) => (
-                    <Select defaultValue={row.values.status} variant="outline">
-                        <option value="Pending">Pending</option>
-                        <option value="Processing">Processing</option>
-                        <option value="Delivered">Delivered</option>
-                    </Select>
-                ),
-            },
-
-            {
-                Header: 'Action',
-                accessor: 'action',
-                Cell: ({ row }) => (
-                    <Button onClick={() => handleUpdate(row.values.id)} colorScheme="teal" size="sm">
-                        Update
-                    </Button>
-                ),
-            },
-        ],
-        [],
-    );
-
-    const handleUpdate = (orderId) => {
-        console.log(`Update order with ID: ${orderId}`);
+    const store = useSelector((state) => state.store.store);
+    const accessToken = useSelector((state) => state.auth.accessToken);
+    const [orders, setOrders] = useState([]);
+    const fetchOrders = async () => {
+        try {
+            const response = await axios.get(`http://192.168.0.104:5000/orders/seller?storeId=${store._id}`, {
+                timeout: 3000,
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    x_authorization: accessToken,
+                },
+            });
+            setOrders(response.data);
+        } catch (error) {
+            console.error('Error fetching orders:', error.message);
+        }
     };
+    useEffect(() => {
+        fetchOrders();
+    }, [store._id, accessToken]); // Include store._id and accessToken in the dependency array
 
-    const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } = useTable({ columns, data });
+    const handleUpdate = async (orderId, newStatus) => {
+        try {
+            // Call the API to update the order status
+            await axios.post(
+                'http://192.168.0.104:5000/orders/update',
+                {
+                    orderId,
+                    newStatus,
+                },
+                {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        x_authorization: accessToken,
+                    },
+                },
+            );
+
+            toast.success('Update successfully!', { position: 'top-right' });
+            fetchOrders();
+        } catch (error) {
+            console.error('Error updating order status:', error.message);
+        }
+    };
 
     return (
         <Box p={4}>
             <Heading fontSize={30} mb={4}>
                 Order Manager
             </Heading>
-            <Table {...getTableProps()} variant="striped" colorScheme="teal" size="sm">
+            <Table variant="simple" size="sm">
                 <Thead>
-                    {headerGroups.map((headerGroup, index) => (
-                        <Tr {...headerGroup.getHeaderGroupProps()} key={index}>
-                            {headerGroup.headers.map((column) => (
-                                <Th {...column.getHeaderProps()}>{column.render('Header')}</Th>
-                            ))}
+                    <Tr>
+                        <Th>ID Order</Th>
+                        <Th>Buyer Name</Th>
+                        <Th>Phone Number</Th>
+                        <Th>Products</Th>
+                        <Th>Quantity</Th>
+                        <Th>Price</Th>
+                        <Th>Address</Th>
+                        <Th>Status</Th>
+                    </Tr>
+                </Thead>
+                <Tbody>
+                    {orders.map((order) => (
+                        <Tr key={order._id}>
+                            <Td>{order._id}</Td>
+                            <Td>{order.buyer.username}</Td>
+                            <Td>{order.phoneNumber}</Td>
+                            <Td>
+                                {order.products.map((product) => (
+                                    <Stack key={product._id} direction="row" spacing={2}>
+                                        <Image
+                                            src={`http://192.168.0.104:5000/${product.images[0]}`}
+                                            alt={product.name}
+                                            boxSize="40px"
+                                        />
+                                        <Text>{product.name}</Text>
+                                    </Stack>
+                                ))}
+                            </Td>
+                            <Td>{order.products.length}</Td>
+                            <Td>${order.totalAmount}</Td>
+                            <Td>{order.address}</Td>
+                            <Td>
+                                <Select
+                                    defaultValue={order.status}
+                                    variant="outline"
+                                    onChange={(e) => handleUpdate(order._id, e.target.value)}
+                                >
+                                    <option value="pending">Pending</option>
+                                    <option value="processing">Processing</option>
+                                    <option value="shipped">Shipped</option>
+                                    <option value="completed">Completed</option>
+                                    <option value="cancelled">Cancelled</option>
+                                </Select>
+                            </Td>
                         </Tr>
                     ))}
-                </Thead>
-                <Tbody {...getTableBodyProps()}>
-                    {rows.map((row) => {
-                        prepareRow(row);
-                        return (
-                            <Tr {...row.getRowProps()}>
-                                {row.cells.map((cell, index) => (
-                                    <Td {...cell.getCellProps()} key={index}>
-                                        {cell.render('Cell')}
-                                    </Td>
-                                ))}
-                            </Tr>
-                        );
-                    })}
                 </Tbody>
             </Table>
         </Box>

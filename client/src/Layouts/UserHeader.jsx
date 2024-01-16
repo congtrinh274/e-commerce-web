@@ -18,8 +18,11 @@ import config from '~/config';
 import { logo } from '~/assets/images';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '~/contexts/cartContext';
+import { useDispatch } from 'react-redux';
+import { getStore } from '~/redux/features/storeSlices';
 
 function UserHeader() {
+    const dispatch = useDispatch();
     const navigate = useNavigate();
     const { auth } = JSON.parse(localStorage.getItem('appState')) || {};
     const store = JSON.parse(localStorage.getItem('store')) || {};
@@ -29,6 +32,15 @@ function UserHeader() {
         localStorage.removeItem('appState');
         localStorage.removeItem('store');
         navigate('/');
+    };
+
+    const handleGetHomeStore = async () => {
+        try {
+            await dispatch(getStore(auth.user._id, auth.accessToken));
+        } catch (error) {
+            console.log(error);
+        }
+        navigate('/store/home-store');
     };
 
     return (
@@ -102,9 +114,11 @@ function UserHeader() {
                             >
                                 <MenuItem _hover={{ bg: 'teal.100' }}>Profile</MenuItem>
                                 <MenuItem _hover={{ bg: 'teal.100' }}>Favorites</MenuItem>
-                                <MenuItem _hover={{ bg: 'teal.100' }}>Your Orders</MenuItem>
+                                <MenuItem _hover={{ bg: 'teal.100' }} onClick={() => navigate('/user-orders')}>
+                                    Your Orders
+                                </MenuItem>
                                 {store._id || auth.user.store ? (
-                                    <MenuItem _hover={{ bg: 'teal.100' }} onClick={() => navigate('/store/home-store')}>
+                                    <MenuItem _hover={{ bg: 'teal.100' }} onClick={() => handleGetHomeStore()}>
                                         Your shop
                                     </MenuItem>
                                 ) : (

@@ -26,11 +26,11 @@ import ImageUploader from '~/components/ImageLoader';
 import { useDispatch, useSelector } from 'react-redux';
 import { addProduct } from '~/redux/features/productSlices';
 
-const ProductContainer = ({ sellerMode }) => {
+const ProductContainer = ({ sellerMode = true }) => {
     const dispatch = useDispatch();
     const accessToken = useSelector((state) => state.auth.accessToken);
     const store = useSelector((state) => state.store.store);
-    const products = store.products;
+    const products = store.products || [];
     const { isOpen, onOpen, onClose } = useDisclosure();
     const [selectedCategory, setSelectedCategory] = useState('all');
     const [currentPage, setCurrentPage] = useState(1);

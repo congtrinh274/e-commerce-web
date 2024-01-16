@@ -8,6 +8,7 @@ import RegisterStore from '~/pages/Store/RegisterStore';
 import HomeStore from '~/pages/Store/HomeStore';
 import ProductDetail from '~/pages/Product';
 import Cart from '~/pages/Cart';
+import Orders from '~/pages/Orders';
 
 // Public routes
 const publicRoutes = [
@@ -24,6 +25,7 @@ const publicRoutes = [
     { path: config.routes.homeStore, components: HomeStore },
     { path: config.routes.productDetail, components: ProductDetail },
     { path: config.routes.cart, components: Cart },
+    { path: config.routes.userOrder, components: Orders },
 ];
 
 // Private routes

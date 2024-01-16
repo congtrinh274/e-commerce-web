@@ -8,7 +8,7 @@ import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useCart } from '~/contexts/cartContext';
 
-const ProductCard = ({ product, sellerMode = false }) => {
+const ProductCard = ({ product, sellerMode }) => {
     const navigate = useNavigate();
     const productImage = replaceImageUrl(product.images[0], 'http://localhost:5000');
     const { dispatch } = useCart(); // Use useCart hook to get access to dispatch function

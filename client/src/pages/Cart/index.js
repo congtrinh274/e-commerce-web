@@ -20,12 +20,17 @@ import CartCard from '~/components/CartCard';
 import StripeForm from '~/components/StripeForm';
 import { Elements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
+import axios from 'axios';
+import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 
 const stripePromise = loadStripe(
     'pk_test_51OYliSH9BeeFsG5ZXk52tnALqqch9FAjY5l8hFRycbZdHFAg1EWinWgBu9vxIlhtWnX2towSjJYQUjNvsrgVymHD00rZNrnmf6',
 );
 
 const Cart = () => {
+    const navigate = useNavigate();
+    const auth = useSelector((state) => state.auth);
     const { cart, dispatch } = useCart();
     const { isOpen, onOpen, onClose } = useDisclosure();
     const [orderInfo, setOrderInfo] = useState({
@@ -53,14 +58,37 @@ const Cart = () => {
         return cart.reduce((total, product) => total + product.price * product.quantity, 0);
     };
 
-    const handleOrder = () => {
-        onOpen(); // Mở modal khi click vào "Order Now"
+    const handleOpenOrderModal = () => {
+        onOpen();
     };
 
-    const handleConfirmOrder = () => {
-        // Logic xác nhận đơn hàng và đóng modal
-        // ...
-        onClose();
+    const handleConfirmOrder = async () => {
+        try {
+            const response = await axios.post(
+                'http://192.168.0.104:5000/orders/create',
+                {
+                    buyer: auth.user._id,
+                    products: cart,
+                    address: orderInfo.address,
+                    phoneNumber: orderInfo.phoneNumber,
+                    paymentMethod: orderInfo.paymentMethod,
+                },
+                {
+                    timeout: 3000,
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        x_authorization: auth.accessToken,
+                    },
+                },
+            );
+            localStorage.removeItem('cart');
+            navigate('/user-orders');
+            console.log(response.data);
+
+            onClose();
+        } catch (error) {
+            console.error('Error creating order:', error.message);
+        }
     };
 
     return (
@@ -92,7 +120,7 @@ const Cart = () => {
                         <Box>{`$${calculateTotal()}`}</Box>
                     </Flex>
                 </Box>
-                <Button mt="20" colorScheme="teal" onClick={handleOrder} isFullWidth>
+                <Button mt="20" colorScheme="teal" onClick={handleOpenOrderModal} isFullWidth>
                     Order Now
                 </Button>
             </Box>
