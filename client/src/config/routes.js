@@ -13,6 +13,7 @@ const routes = {
     productDetail: '/products/product-detail',
     cart: '/cart',
     userOrder: '/user-orders',
+    wishList: '/wishlist',
 };
 
 export default routes;

@@ -3,13 +3,34 @@ import { Box, Image, Text, Button, Flex } from '@chakra-ui/react';
 import { FaStar } from 'react-icons/fa';
 import { useLocation } from 'react-router-dom';
 import replaceImageUrl from '~/utils/replaceImage';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { useCart } from '~/contexts/cartContext';
 
-const ProductDetail = ({ onAddToCart }) => {
+const ProductDetail = () => {
+    const { dispatch } = useCart();
     const {
         state: { product },
     } = useLocation();
+
     const { name, description, price, ratings, shop } = product;
     const productImage = replaceImageUrl(product.images[0], 'http://localhost:5000');
+    const handleAddToCart = () => {
+        const existingCart = JSON.parse(localStorage.getItem('cart')) || [];
+        const existingProductIndex = existingCart.findIndex((item) => item._id === product._id);
+
+        if (existingProductIndex !== -1) {
+            existingCart[existingProductIndex].quantity += 1;
+        } else {
+            existingCart.push({ ...product, quantity: 1 });
+        }
+
+        // Replace localStorage update with dispatch function from useCart context
+        dispatch({ type: 'UPDATE_CART', payload: existingCart });
+        localStorage.setItem('cart', JSON.stringify(existingCart));
+
+        toast.success('Product added to cart!', { position: 'top-left' });
+    };
 
     return (
         <Box p={4} maxW="800px" mx="auto" mt={8}>
@@ -39,7 +60,7 @@ const ProductDetail = ({ onAddToCart }) => {
                             {product.store.name}
                         </Text>
                     </Flex>
-                    <Button colorScheme="teal" onClick={onAddToCart} mt={4}>
+                    <Button colorScheme="teal" onClick={handleAddToCart} mt={4}>
                         Add to Cart
                     </Button>
                 </Box>

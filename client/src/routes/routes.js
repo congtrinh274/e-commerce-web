@@ -9,6 +9,7 @@ import HomeStore from '~/pages/Store/HomeStore';
 import ProductDetail from '~/pages/Product';
 import Cart from '~/pages/Cart';
 import Orders from '~/pages/Orders';
+import WishList from '~/pages/WishList';
 
 // Public routes
 const publicRoutes = [
@@ -26,6 +27,7 @@ const publicRoutes = [
     { path: config.routes.productDetail, components: ProductDetail },
     { path: config.routes.cart, components: Cart },
     { path: config.routes.userOrder, components: Orders },
+    { path: config.routes.wishList, components: WishList },
 ];
 
 // Private routes

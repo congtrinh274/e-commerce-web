@@ -63,7 +63,6 @@ const OrderManager = () => {
                         <Th>Buyer Name</Th>
                         <Th>Phone Number</Th>
                         <Th>Products</Th>
-                        <Th>Quantity</Th>
                         <Th>Price</Th>
                         <Th>Address</Th>
                         <Th>Status</Th>
@@ -76,18 +75,23 @@ const OrderManager = () => {
                             <Td>{order.buyer.username}</Td>
                             <Td>{order.phoneNumber}</Td>
                             <Td>
-                                {order.products.map((product) => (
-                                    <Stack key={product._id} direction="row" spacing={2}>
-                                        <Image
-                                            src={`http://192.168.0.104:5000/${product.images[0]}`}
-                                            alt={product.name}
-                                            boxSize="40px"
-                                        />
-                                        <Text>{product.name}</Text>
-                                    </Stack>
-                                ))}
+                                {order.products && order.products.length > 0 ? (
+                                    order.products.map((productData) => (
+                                        <Stack key={productData._id} direction="row" spacing={2} mb={4}>
+                                            <Image
+                                                src={`http://localhost:5000/${productData.product.images[0]}`}
+                                                alt={productData.product.name}
+                                                boxSize="40px"
+                                            />
+                                            <Text>
+                                                {productData.product.name} x{productData.quantity}
+                                            </Text>
+                                        </Stack>
+                                    ))
+                                ) : (
+                                    <Text>No products</Text>
+                                )}
                             </Td>
-                            <Td>{order.products.length}</Td>
                             <Td>${order.totalAmount}</Td>
                             <Td>{order.address}</Td>
                             <Td>

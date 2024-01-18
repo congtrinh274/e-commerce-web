@@ -1,7 +1,6 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Box, Image, Text, Button, Flex, IconButton } from '@chakra-ui/react';
-import { FaStar } from 'react-icons/fa';
-import { FaHeart } from 'react-icons/fa';
+import { FaStar, FaHeart } from 'react-icons/fa';
 import replaceImageUrl from '~/utils/replaceImage';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
@@ -11,7 +10,17 @@ import { useCart } from '~/contexts/cartContext';
 const ProductCard = ({ product, sellerMode }) => {
     const navigate = useNavigate();
     const productImage = replaceImageUrl(product.images[0], 'http://localhost:5000');
-    const { dispatch } = useCart(); // Use useCart hook to get access to dispatch function
+    const { dispatch } = useCart();
+    const [isInWishlist, setIsInWishlist] = useState(false);
+
+    const loadWishlistStatus = () => {
+        const existingWishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
+        return existingWishlist.some((item) => item._id === product._id);
+    };
+
+    useEffect(() => {
+        setIsInWishlist(loadWishlistStatus());
+    }, []); // Chỉ chạy một lần khi component được render
 
     const handleGetProductDetail = () => {
         navigate('/products/product-detail', { state: { product } });
@@ -32,6 +41,24 @@ const ProductCard = ({ product, sellerMode }) => {
         localStorage.setItem('cart', JSON.stringify(existingCart));
 
         toast.success('Product added to cart!', { position: 'top-left' });
+    };
+
+    const handleToggleWishlist = () => {
+        const existingWishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
+
+        if (isInWishlist) {
+            // Remove from wishlist
+            const updatedWishlist = existingWishlist.filter((item) => item._id !== product._id);
+            localStorage.setItem('wishlist', JSON.stringify(updatedWishlist));
+            setIsInWishlist(false);
+            toast.info('Product removed from wishlist!', { position: 'top-left' });
+        } else {
+            // Add to wishlist
+            existingWishlist.push(product);
+            localStorage.setItem('wishlist', JSON.stringify(existingWishlist));
+            setIsInWishlist(true);
+            toast.success('Product added to wishlist!', { position: 'top-left' });
+        }
     };
 
     return (
@@ -73,6 +100,14 @@ const ProductCard = ({ product, sellerMode }) => {
                                 {product.store.name}
                             </Text>
                         </Flex>
+                        {product.quantity && (
+                            <Flex mt="2" color="teal.500" alignItems="center">
+                                Orders quantity:{' '}
+                                <Text color="red" ml={2}>
+                                    {product.quantity}
+                                </Text>
+                            </Flex>
+                        )}
                     </Flex>
                 </Box>
             </Box>
@@ -80,10 +115,8 @@ const ProductCard = ({ product, sellerMode }) => {
                 <IconButton
                     icon={<FaHeart size="0.6rem" />}
                     aria-label="Add to Favorites"
-                    onClick={() => {
-                        // Xử lí logic khi click vào hình trái tim
-                    }}
-                    colorScheme="red"
+                    onClick={handleToggleWishlist}
+                    colorScheme={isInWishlist ? 'red' : 'gray'}
                 />
                 {sellerMode ? (
                     <Button colorScheme="teal" onClick={() => {}} width="50%">
@@ -91,7 +124,7 @@ const ProductCard = ({ product, sellerMode }) => {
                     </Button>
                 ) : (
                     <Button colorScheme="teal" onClick={handleAddToCart} width="50%">
-                        Add to Card
+                        Add to Cart
                     </Button>
                 )}
             </Flex>

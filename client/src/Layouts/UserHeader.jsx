@@ -113,7 +113,9 @@ function UserHeader() {
                                 color="teal.500"
                             >
                                 <MenuItem _hover={{ bg: 'teal.100' }}>Profile</MenuItem>
-                                <MenuItem _hover={{ bg: 'teal.100' }}>Favorites</MenuItem>
+                                <MenuItem _hover={{ bg: 'teal.100' }} onClick={() => navigate('/wishlist')}>
+                                    Favorites
+                                </MenuItem>
                                 <MenuItem _hover={{ bg: 'teal.100' }} onClick={() => navigate('/user-orders')}>
                                     Your Orders
                                 </MenuItem>

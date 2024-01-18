@@ -6,7 +6,7 @@ import ProductCard from './ProductCard';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 
-const ProductSlider = ({ products, onAddToCart, heading, sellerMode }) => {
+const ProductSlider = ({ products, onAddToCart, heading, sellerMode, id }) => {
     const settings = {
         dots: true,
         infinite: true,
@@ -28,7 +28,7 @@ const ProductSlider = ({ products, onAddToCart, heading, sellerMode }) => {
     const sliderRef = React.useRef(null);
 
     return (
-        <Box position="relative" mt={12} mb={20}>
+        <Box position="relative" mt={12} mb={20} id={id}>
             <IconButton
                 icon={<FaArrowLeft />}
                 aria-label="Previous"

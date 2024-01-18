@@ -14,6 +14,7 @@ import {
     useDisclosure,
     Input,
     Select,
+    Text,
 } from '@chakra-ui/react';
 import { useCart } from '~/contexts/cartContext';
 import CartCard from '~/components/CartCard';
@@ -95,34 +96,53 @@ const Cart = () => {
         <Flex>
             <Box flex="1">
                 <Heading mb="4">Shopping Cart</Heading>
-                {cart.map((product) => (
-                    <CartCard
-                        key={product._id}
-                        product={product}
-                        onRemove={handleRemove}
-                        onUpdateQuantity={handleUpdateQuantity}
-                    />
-                ))}
+                {cart.length === 0 ? (
+                    <>
+                        <Text mb="4">Your cart is empty.</Text>
+                        <Button colorScheme="teal" onClick={() => navigate('/')}>
+                            Add Products
+                        </Button>
+                    </>
+                ) : (
+                    <>
+                        {cart.map((product) => (
+                            <CartCard
+                                key={product._id}
+                                product={product}
+                                onRemove={handleRemove}
+                                onUpdateQuantity={handleUpdateQuantity}
+                            />
+                        ))}
+                    </>
+                )}
             </Box>
             <Box w="300px" p="4" borderWidth="1px" borderRadius="lg" ml="4" top="0" maxH={500}>
-                <Box>
-                    <Heading mb="4" size="md">
-                        Summary
-                    </Heading>
-                    {cart.map((product) => (
-                        <Flex key={product._id} justify="space-between" mb="4">
-                            <Box>{`${product.name} x${product.quantity}`}</Box>
-                            <Box>{`$${product.price * product.quantity}`}</Box>
+                {cart.length > 0 && (
+                    <Box>
+                        <Heading mb="4" size="md">
+                            Summary
+                        </Heading>
+                        {cart.map((product) => (
+                            <Flex key={product._id} justify="space-between" mb="4">
+                                <Box>{`${product.name} x${product.quantity}`}</Box>
+                                <Box>{`$${product.price * product.quantity}`}</Box>
+                            </Flex>
+                        ))}
+                        <Flex justify="space-between" fontWeight="bold" mt="4">
+                            <Box>Total:</Box>
+                            <Box>{`$${calculateTotal()}`}</Box>
                         </Flex>
-                    ))}
-                    <Flex justify="space-between" fontWeight="bold" mt="4">
-                        <Box>Total:</Box>
-                        <Box>{`$${calculateTotal()}`}</Box>
-                    </Flex>
-                </Box>
-                <Button mt="20" colorScheme="teal" onClick={handleOpenOrderModal} isFullWidth>
-                    Order Now
-                </Button>
+                    </Box>
+                )}
+                {cart.length === 0 ? (
+                    <Button mt="20" colorScheme="teal" onClick={handleOpenOrderModal} isFullWidth isDisabled>
+                        Order Now
+                    </Button>
+                ) : (
+                    <Button mt="20" colorScheme="teal" onClick={handleOpenOrderModal} isFullWidth>
+                        Order Now
+                    </Button>
+                )}
             </Box>
 
             {/* Modal */}
