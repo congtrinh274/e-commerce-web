@@ -3,6 +3,16 @@ const Order = require('../models/OrderModel');
 const Store = require('../models/StoreModel');
 
 class OrderController {
+    async getAllOrders(req, res) {
+        try {
+            const orders = await Order.find().populate({
+                path: 'products.product',
+            });
+            res.json(orders);
+        } catch {
+            res.status(500).json({ message: error.message });
+        }
+    }
     async getAllOrdersSeller(req, res) {
         const storeId = req.query.storeId;
         try {
@@ -11,9 +21,8 @@ class OrderController {
                     path: 'buyer',
                 })
                 .populate({
-                    path: 'products',
+                    path: 'products.product',
                 });
-            console.log(orders);
             res.json(orders);
         } catch (error) {
             res.status(500).json({ message: error.message });
@@ -25,13 +34,12 @@ class OrderController {
         try {
             const orders = await Order.find({ buyer: buyerId })
                 .populate({
-                    path: 'products',
+                    path: 'products.product',
                 })
                 .populate({
                     path: 'seller',
                 });
 
-            console.log(orders);
             res.json(orders);
         } catch (error) {
             res.status(500).json({ message: error.message });
@@ -47,10 +55,8 @@ class OrderController {
 
             products.forEach((product) => {
                 const { store, _id, quantity, price } = product;
-                console.log(store);
 
                 if (!addedStores.includes(store._id)) {
-                    // Nếu cửa hàng chưa được thêm vào
                     addedStores.push(store._id);
 
                     const key = `${store._id}`;
@@ -58,7 +64,7 @@ class OrderController {
                     shopOrders[key] = {
                         buyer,
                         seller: store._id,
-                        products: [_id], // Chỉ lưu product ID
+                        products: [{ product: _id, quantity }],
                         totalAmount: quantity * price,
                         address,
                         phoneNumber,
@@ -66,14 +72,13 @@ class OrderController {
                         status: 'pending',
                     };
                 } else {
-                    // Nếu cửa hàng đã được thêm vào, kiểm tra xem đã có order chưa
-                    const key = `${seller}`;
+                    const key = `${store._id}`;
 
                     if (!shopOrders[key]) {
                         shopOrders[key] = {
                             buyer,
-                            seller,
-                            products: [_id],
+                            seller: store._id,
+                            products: [{ product: _id, quantity }],
                             totalAmount: quantity * price,
                             address,
                             phoneNumber,
@@ -81,7 +86,7 @@ class OrderController {
                             status: 'pending',
                         };
                     } else {
-                        shopOrders[key].products.push(_id);
+                        shopOrders[key].products.push({ product: _id, quantity });
                         shopOrders[key].totalAmount += quantity * price;
                     }
                 }
@@ -92,14 +97,10 @@ class OrderController {
                     const order = new Order(orderData);
                     const savedOrder = await order.save();
 
-                    // Lấy ID của order đã được lưu
                     const orderId = savedOrder._id;
-
-                    // Lấy ID của store
                     const storeId = orderData.seller;
 
-                    // Cập nhật mảng order trong model Store
-                    await Store.findByIdAndUpdate(storeId, { $push: { order: orderId } });
+                    await Store.findByIdAndUpdate(storeId, { $push: { orders: orderId } });
 
                     return savedOrder;
                 }),

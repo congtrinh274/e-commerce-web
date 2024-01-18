@@ -5,6 +5,17 @@ mongoose.plugin(slug);
 
 const Schema = mongoose.Schema;
 
+const ProductInOrderSchema = new Schema({
+    product: {
+        type: Schema.Types.ObjectId,
+        ref: 'Product',
+    },
+    quantity: {
+        type: Number,
+        default: 1,
+    },
+});
+
 const OrderSchema = new Schema(
     {
         buyer: {
@@ -17,12 +28,7 @@ const OrderSchema = new Schema(
             ref: 'Store',
             required: true,
         },
-        products: [
-            {
-                type: Schema.Types.ObjectId,
-                ref: 'Product',
-            },
-        ],
+        products: [ProductInOrderSchema],
         address: {
             type: String,
         },
